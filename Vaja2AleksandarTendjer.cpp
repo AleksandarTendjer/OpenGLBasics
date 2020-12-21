@@ -19,6 +19,7 @@ void UResizeWindow(int w, int h) {
 
 
 //Starting Graphics rendering
+/*
 void URenderGraphics(void) {
 	// Enable z-depth
 	glEnable(GL_DEPTH_TEST);
@@ -71,9 +72,9 @@ void URenderGraphics(void) {
 
 	glutSwapBuffers();
 
-}
+} */
 //changed Graphics rendering
-void URenderGraphics(float tx,float ty,float tz, float rx,float ry,float rz,float angle, float sc) {
+void URenderGraphics() {
 	// Enable z-depth
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -85,22 +86,22 @@ void URenderGraphics(float tx,float ty,float tz, float rx,float ry,float rz,floa
 	glm::mat4 model(1.0f);
 
 	// Place the object at the center of the viewport
-	model = glm::translate(model, glm::vec3(tx, ty, tz));
+	model = glm::translate(model, glm::vec3(translateX, translateY, translateZ));
 
 	//defining for how much are we going to rotate which  axis
 	//1.0 is set on rx,ry,rz for the axis that we want to use, otherwise
 	//all pthers are 0
 	//angle is value from -360 to +360
-	model = glm::rotate(model, angle, glm::vec3(rx, ry, rz));
+	model = glm::rotate(model, angle, glm::vec3(rotateX, rotateY, rotateZ));
 
 	
 	// Increase the object size by a scale of sc value
-	model = glm::scale(model, glm::vec3(sc, sc, sc));
+	model = glm::scale(model, glm::vec3(scale, scale, scale));
 	
 	// transforms the camera and set the
 	// I also did not set the view using the (1.0f) param
 	glm::mat4 view(1.0f);
-	view = glm::translate(view, glm::vec3(0.5f, 0.0f, -5.0f));
+	view = glm::translate(view, glm::vec3(zoomX, zoomY, zoomZ));
 
 	// Perspective projection
 	glm::mat4 projection;
@@ -225,54 +226,120 @@ void UCreateBuffers() {
 
 	glBindVertexArray(0);
 }
-/* */
-bool moveL = false;
-bool moveR = false;
-bool moveU = false;
-bool moveD = false; 
 
 //detect keys pressed
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	bool set = (action != GLFW_RELEASE); // true if we have GLFW_PRESS or GLFW_REPEAT
-	switch (key)
-	{
-	case GLFW_KEY_ESCAPE:
-		glfwSetWindowShouldClose(window, GL_TRUE);
+/*
+void processKeys(unsigned char key, int x, int y) {
+
+
+	
+	case GLFW_KEY_HOME: // to rotate clockwise
+		rotateX = 1.0f;
+		angle += 2.0f;
+		if (angle > 360)
+			angle -= 360;
+		cout << angle;
 		break;
-	case GLFW_KEY_RIGHT:
-		moveR = set;
+	case GLFW_KEY_END: // to rotate anti clockwise
+		rotateX = 1.0f;
+		angle -= 2.0f;
+		if (angle < 360)
+			angle += 360;
+		cout << angle;
+
 		break;
+	case GLFW_KEY_PAGE_UP:  //expand
+		scale += .5;
 		break;
-	case GLFW_KEY_LEFT:
-		moveL = set;
- 		break;
-		break;
-	case GLFW_KEY_UP:
-		moveU = set;
-		break;
-	case GLFW_KEY_DOWN:
-		moveD = set;
+
+	case GLFW_KEY_PAGE_DOWN: //shrink
+		scale -= .5;
 		break;
 	default:
 		break;
 	}
+	glutPostRedisplay();
+}*/
+void processSpecialKeys(unsigned char key, int x, int y)
+{
+	// Press ALT or  SHIFT or  CTRL in combination with other keys.
+	printf("key_code =%d  \n", key);
+
+	int mod = glutGetModifiers();
+
+	if (mod != 0) //=4  SHIFT=1  CTRL=2
+	{
+		switch (mod)
+		{
+		case GLUT_KEY_PAGE_UP:
+				break;
+				case GLUT_KEY_PAGE_DOWN:
+
+			break;
+				
+				case GLUT_KEY_HOME:
+			break;
+				case	GLUT_KEY_END:
+			break;
+		}
+	}
 }
 
-int main(int argc, char* argv[]) {
+
+void processNormalKeys(int key, int x, int y)
+{
 	
+		switch (key)
+		{
+		case 100: //move left
+			translateX -= step;
+			cout<<"GLUT_KEY_LEFT %d\n"+ key<<endl;
+			break;
+		case 102: //move right
+			translateX += step;
+			cout<<"GLUT_KEY_LEFT %d\n" + key<<endl;  
+			break;
+		case 101: //move up
+			translateY += step;
+			cout << "GLUT_KEY_DOWN %d\n"+ key;
+			break;
+		case 103: // move down
+			translateY -= step;
+			cout<<"GLUT_KEY_DOWN %d\n"+ key<<endl;
+			break;
+		case 27:      break;
+		 default:break;
+		}
+	
+	
+}
+int main(int argc, char* argv[]) {
+	/*
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	//use core profile
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	*/
+
 	glutInit(&argc, argv);
+	glEnable(GL_DEPTH_TEST);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(WindowWidth,WindowHeight);
 	glutCreateWindow(WINDOW_TITLE);
-	GLFWwindow*window= glfwCreateWindow(WindowWidth, WindowHeight, "3D piramida", NULL, NULL);
+	
+	//GLFWwindow*window= glfwCreateWindow(WindowWidth, WindowHeight, "3D piramida", NULL, NULL);
 	glutReshapeFunc(UResizeWindow);
+	//glfwMakeContextCurrent(window);
+//	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
 
 	glewExperimental = GL_TRUE;
+
 	if (glewInit() != GLEW_OK) {
 		std::cout << "Failed to initialize GLEW" << std::endl;
 		return -1;
 	}
+
 	//Shading 
 	UCreateShader();
 	//buffer data
@@ -281,33 +348,21 @@ int main(int argc, char* argv[]) {
 
 	// User the shader program
 	glUseProgram(shaderProgram);
+	
+
 	// Set background color
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	glutDisplayFunc(URenderGraphics);//(&pyramid3D->URenderGraphics);
+	glutKeyboardFunc(processKeys);
 
+	
 	// Create and run OpenGL Loop
 	glutMainLoop();
 	//Sets a callback to a function 
-	while(!glfwWindowShouldClose(window)) {
-		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+
+
 	
-		glutDisplayFunc(URenderGraphics(translateX,translateY,translateZ,rotateX,rotateY,rotateZ,angle,scale));
-		//drawTriangle();
-		
-		//drawTriangle();
-		
-		glfwSetKeyCallback(window, key_callback);
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-
-
-	glfwTerminate();
-	
-
 	// Deletes buffer objects once used
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);

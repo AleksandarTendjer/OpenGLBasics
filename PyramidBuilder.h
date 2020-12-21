@@ -1,8 +1,10 @@
 #pragma once
 #include <iostream>
+
 #include <GL/glew.h>
-#include <GL/freeglut.h>
 #include "GLFW/glfw3.h"
+#include <GL/freeglut.h>
+
 // GLM include
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -50,14 +52,19 @@
 	void UCreateShader(void);
 	void UCreateBuffers(void);
 	//global variables
-	float translateX  ;
-	float translateY;
-	float translateZ;
-	float rotateX; 
-	float rotateY;
-	float rotateZ;
-	float angle;
-	float scale;
+	float translateX=0.0f  ;
+	float translateY=0.0f;
+	float translateZ=0.0f;
+	float rotateX=1.0f; 
+	float rotateY=0.0f;
+	float rotateZ=0.0f;
+	float angle= 45.0f;
+	float scale=2.0f;
+	float step=0.1f;
+	float zoomX = 0.5f;
+	float zoomY = 0.0f;
+	float zoomZ=-0.5f;
+
 
 
 	
