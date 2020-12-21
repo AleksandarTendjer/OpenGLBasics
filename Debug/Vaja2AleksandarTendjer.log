@@ -1,0 +1,3 @@
+﻿  Vaja2AleksandarTendjer.cpp
+C:\Users\WhyteRabyte\source\repos\RA\Vaja2AleksandarTendjer\Vaja2AleksandarTendjer\Vaja2AleksandarTendjer.cpp(452,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+LINK : fatal error LNK1104: cannot open file 'freeglut.lib'
