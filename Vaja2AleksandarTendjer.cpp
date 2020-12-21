@@ -112,7 +112,8 @@ void URenderGraphics() {
 	}
 	else
 	{				//45.0f,(GLfloat)WindowWidth / (GLfloat)WindowHeight, 0.1f, 100.0f
-		projection = glm::ortho(45.0f, (GLfloat)WindowWidth / (GLfloat)WindowHeight, 0.1f, 100.0f);
+		projection =  glm::ortho(-1.0f, +1.0f, -1.0f, +1.0f, +2.0f, -1.0f);
+
 	}
 	// Retrieves and passes transform matirices to the shader program
 	GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
