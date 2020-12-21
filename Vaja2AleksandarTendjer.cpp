@@ -105,9 +105,15 @@ void URenderGraphics() {
 
 	// Perspective projection
 	glm::mat4 projection;
-	projection = glm::perspective(45.0f,
-		(GLfloat)WindowWidth / (GLfloat)WindowHeight, 0.1f, 100.0f);
-
+	if (ortho % 2 != 0)
+	{
+		projection = glm::perspective(45.0f,
+			(GLfloat)WindowWidth / (GLfloat)WindowHeight, 0.1f, 100.0f);
+	}
+	else
+	{				//45.0f,(GLfloat)WindowWidth / (GLfloat)WindowHeight, 0.1f, 100.0f
+		projection = glm::ortho(45.0f, (GLfloat)WindowWidth / (GLfloat)WindowHeight, 0.1f, 100.0f);
+	}
 	// Retrieves and passes transform matirices to the shader program
 	GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
 	GLint viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -263,20 +269,31 @@ void processSpecialKeys(unsigned char key, int x, int y)
 			break;
 		case 'a': //move left
 			translateX -= step;
-			cout << "GLUT_KEY_LEFT %d\n" + key << endl;
+			cout << "camera moving left " << translateX << endl;
 			break;
 		case 'd': //move right
 			translateX += step;
-			cout << "GLUT_KEY_LEFT %d\n" + key << endl;
+			cout << "camera moving right " << translateX << endl;
 			break;
 		case 'w': //move up
 			translateY += step;
-			cout << "GLUT_KEY_UP %d\n" + key;
+			cout << "camera moving up " << translateY << endl;		
 			break;
 		case 's': // move down
 			translateY -= step;
-			cout << "GLUT_KEY_DOWN %d\n" + key << endl;
+			cout << "camera moving down " <<translateY << endl;
 			break;
+		case 'o':
+			ortho += 1;
+			if (ortho % 2 != 0)
+			{
+				cout << "orthogonal "<< endl;
+				
+			}
+			else
+			{
+				cout << "pravokotno-perspective " << endl;
+			}
 		case 32:
 			cout << "space"<<endl;
 			break;

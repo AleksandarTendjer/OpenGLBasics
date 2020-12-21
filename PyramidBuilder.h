@@ -64,6 +64,7 @@
 	float zoomX = 0.5f;
 	float zoomY = 0.0f;
 	float zoomZ=-0.5f;
+	int ortho=0;
 
 
 
