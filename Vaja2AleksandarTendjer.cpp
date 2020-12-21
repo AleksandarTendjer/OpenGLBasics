@@ -1,7 +1,7 @@
 ﻿/*
  * Pyramid3D.cpp
  *
- * 
+ *
  *      Author: Aleksandar Tendjer
  */
 
@@ -94,10 +94,10 @@ void URenderGraphics() {
 	//angle is value from -360 to +360
 	model = glm::rotate(model, angle, glm::vec3(rotateX, rotateY, rotateZ));
 
-	
+
 	// Increase the object size by a scale of sc value
 	model = glm::scale(model, glm::vec3(scale, scale, scale));
-	
+
 	// transforms the camera and set the
 	// I also did not set the view using the (1.0f) param
 	glm::mat4 view(1.0f);
@@ -227,91 +227,78 @@ void UCreateBuffers() {
 	glBindVertexArray(0);
 }
 
-//detect keys pressed
-/*
-void processKeys(unsigned char key, int x, int y) {
 
-
-	
-	case GLFW_KEY_HOME: // to rotate clockwise
-		rotateX = 1.0f;
-		angle += 2.0f;
-		if (angle > 360)
-			angle -= 360;
-		cout << angle;
-		break;
-	case GLFW_KEY_END: // to rotate anti clockwise
-		rotateX = 1.0f;
-		angle -= 2.0f;
-		if (angle < 360)
-			angle += 360;
-		cout << angle;
-
-		break;
-	case GLFW_KEY_PAGE_UP:  //expand
-		scale += .5;
-		break;
-
-	case GLFW_KEY_PAGE_DOWN: //shrink
-		scale -= .5;
-		break;
-	default:
-		break;
-	}
-	glutPostRedisplay();
-}*/
 void processSpecialKeys(unsigned char key, int x, int y)
 {
 	// Press ALT or  SHIFT or  CTRL in combination with other keys.
-	printf("key_code =%d  \n", key);
+	//printf("key_code =%d  \n", key);
+	cout << "print special keys" << endl;
+		//	int mod = glutGetModifiers();
 
-	int mod = glutGetModifiers();
 
-	if (mod != 0) //=4  SHIFT=1  CTRL=2
-	{
-		switch (mod)
+		switch (key)
 		{
-		case GLUT_KEY_PAGE_UP:
-				break;
-				case GLUT_KEY_PAGE_DOWN:
+		case 'k':
+			scale += .5;
+			break;
+		case 'j':
+			scale -= .5;
+			break;
+
+		case 'r':
+			rotateX = 1.0f;
+			angle += 2.0f;
+			if (angle > 360)
+				angle -= 360;
+			cout << angle;
 
 			break;
-				
-				case GLUT_KEY_HOME:
+		case	'e':
+			rotateX = 1.0f;
+			angle -= 2.0f;
+			if (angle > 360)
+				angle -= 360;
+			cout << angle;
+
 			break;
-				case	GLUT_KEY_END:
+		case 'a': //move left
+			translateX -= step;
+			cout << "GLUT_KEY_LEFT %d\n" + key << endl;
+			break;
+		case 'd': //move right
+			translateX += step;
+			cout << "GLUT_KEY_LEFT %d\n" + key << endl;
+			break;
+		case 'w': //move up
+			translateY += step;
+			cout << "GLUT_KEY_UP %d\n" + key;
+			break;
+		case 's': // move down
+			translateY -= step;
+			cout << "GLUT_KEY_DOWN %d\n" + key << endl;
+			break;
+		case 32:
+			cout << "space"<<endl;
+			break;
+		default:
 			break;
 		}
-	}
+	
+	glutPostRedisplay();
 }
 
 
-void processNormalKeys(int key, int x, int y)
+void processNormalKeys(unsigned char key, int x, int y)
 {
+
+	switch (key)
+	{
 	
-		switch (key)
-		{
-		case 100: //move left
-			translateX -= step;
-			cout<<"GLUT_KEY_LEFT %d\n"+ key<<endl;
-			break;
-		case 102: //move right
-			translateX += step;
-			cout<<"GLUT_KEY_LEFT %d\n" + key<<endl;  
-			break;
-		case 101: //move up
-			translateY += step;
-			cout << "GLUT_KEY_DOWN %d\n"+ key;
-			break;
-		case 103: // move down
-			translateY -= step;
-			cout<<"GLUT_KEY_DOWN %d\n"+ key<<endl;
-			break;
-		case 27:      break;
-		 default:break;
-		}
-	
-	
+	case 27:      break;
+	default:break;
+	}
+
+
 }
 int main(int argc, char* argv[]) {
 	/*
@@ -324,9 +311,9 @@ int main(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 	glEnable(GL_DEPTH_TEST);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowSize(WindowWidth,WindowHeight);
+	glutInitWindowSize(WindowWidth, WindowHeight);
 	glutCreateWindow(WINDOW_TITLE);
-	
+
 	//GLFWwindow*window= glfwCreateWindow(WindowWidth, WindowHeight, "3D piramida", NULL, NULL);
 	glutReshapeFunc(UResizeWindow);
 	//glfwMakeContextCurrent(window);
@@ -344,25 +331,27 @@ int main(int argc, char* argv[]) {
 	UCreateShader();
 	//buffer data
 	UCreateBuffers();
-	 
+
 
 	// User the shader program
 	glUseProgram(shaderProgram);
-	
+
 
 	// Set background color
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glutKeyboardFunc(processSpecialKeys);
 
-	glutDisplayFunc(URenderGraphics);//(&pyramid3D->URenderGraphics);
-	glutKeyboardFunc(processKeys);
-
+	glutDisplayFunc(URenderGraphics);
+	//glutKeyboardFunc(processNormalKeys);
 	
+
+
 	// Create and run OpenGL Loop
 	glutMainLoop();
 	//Sets a callback to a function 
 
 
-	
+
 	// Deletes buffer objects once used
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
