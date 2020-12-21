@@ -192,7 +192,7 @@ void UCreateBuffers() {
 		(GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 	glBindVertexArray(0);
-
+	/*
 	// Sets polygon mode allows me to see wireframe view
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
@@ -220,13 +220,14 @@ void UCreateBuffers() {
 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesSquare), indicesSquare,
 		GL_STATIC_DRAW);
-
+	
 	// Set attribute pointer 1 to hold Color data
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (5) * sizeof(GLfloat),
 		(GLvoid*)(3 * sizeof(GLfloat)));
 	//glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(1);
 	glBindVertexArray(1);
+	*/
 	
 }
 
@@ -378,6 +379,9 @@ int main(int argc, char* argv[]) {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
+	glDeleteVertexArrays(1, &VAOSquare);
+	glDeleteBuffers(1, &VBOSquare);
+	glDeleteBuffers(1, &EBOSquare);
 
 	return 0;
 }
