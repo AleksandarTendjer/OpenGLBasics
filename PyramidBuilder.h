@@ -15,6 +15,7 @@
 	// Var declaration for shader, window size, initialization, buffer and array objects
 	GLint shaderProgram, WindowWidth = 800, WindowHeight = 600;
 	GLuint VBO, VAO, EBO, texture;
+	GLuint VBOSquare, VAOSquare, EBOSquare, textureSquare;
 	
 #define WINDOW_TITLE "3D Piramida"
 	// Shader program macro
@@ -65,6 +66,10 @@
 	float zoomY = 0.0f;
 	float zoomZ=-0.5f;
 	int ortho=0;
+	glm::vec3  cameraPos= glm::vec3 ( 0.663740635f, -0.492421985f, 0.562995136f );
+	
+	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3  	UP = glm::vec3( 0.0f, 1.0f, 0.0f );
 
 
 

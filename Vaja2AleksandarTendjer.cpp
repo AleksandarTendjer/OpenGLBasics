@@ -18,61 +18,7 @@ void UResizeWindow(int w, int h) {
 }
 
 
-//Starting Graphics rendering
-/*
-void URenderGraphics(void) {
-	// Enable z-depth
-	glEnable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Activate the vertex array object beforte renderingand transforming them
-	glBindVertexArray(VAO);
-
-	// Declare a 4x4 identity matrix uniform variable to handle transformations
-	glm::mat4 model(1.0f);
-
-	// Place the object at the center of the viewport
-	model = glm::translate(model, glm::vec3(0.0, 0.0f, 0.0f));
-
-	// Rotate the object 15 degrees on the x-axis
-	// I also realized that the transform for my model was way off. Using the updated
-	// code with my old transform made it impossible to see clearly
-	model = glm::rotate(model, -270.0f, glm::vec3(1.0, 0.0f, 0.0f));
-
-	// Rotate the object 45 degrees on the Y-axis
-	model = glm::rotate(model, 45.0f, glm::vec3(0.0, 1.0f, 0.0f));
-
-	// Increase the object size by a scale of 2
-	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-	// transforms the camera and set the
-	// I also did not set the view using the (1.0f) param
-	glm::mat4 view(1.0f);
-	view = glm::translate(view, glm::vec3(0.5f, 0.0f, -5.0f));
-
-	// Perspective projection
-	glm::mat4 projection;
-	projection = glm::perspective(45.0f,
-		(GLfloat)WindowWidth / (GLfloat)WindowHeight, 0.1f, 100.0f);
-
-	// Retrieves and passes transform matirices to the shader program
-	GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
-	GLint viewLoc = glGetUniformLocation(shaderProgram, "view");
-	GLint projLoc = glGetUniformLocation(shaderProgram, "projection");
-
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-	glutPostRedisplay();
-
-	// Draws the triangles
-	glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
-
-	glBindVertexArray(0);
-
-	glutSwapBuffers();
-
-} */
 //changed Graphics rendering
 void URenderGraphics() {
 	// Enable z-depth
@@ -103,6 +49,11 @@ void URenderGraphics() {
 	glm::mat4 view(1.0f);
 	view = glm::translate(view, glm::vec3(zoomX, zoomY, zoomZ));
 
+	//GLM ROTATE, SCALE AND  TRANSLATE IS POSSIBLE TO ADD IN A DIFFERENT WAY
+	//                         BY MULTIPLYING THE MODEL2WORLD MATRICES
+
+	//WORLD 2 VIEW TRANSFORMATION MATRIX is look at 
+	glm::lookAt(cameraPos, cameraPos + cameraFront, UP);
 	// Perspective projection
 	glm::mat4 projection;
 	if (ortho % 2 != 0)
@@ -111,10 +62,13 @@ void URenderGraphics() {
 			(GLfloat)WindowWidth / (GLfloat)WindowHeight, 0.1f, 100.0f);
 	}
 	else
-	{				//45.0f,(GLfloat)WindowWidth / (GLfloat)WindowHeight, 0.1f, 100.0f
+	{				
+		
 		projection =  glm::ortho(-1.0f, +1.0f, -1.0f, +1.0f, +2.0f, -1.0f);
 
 	}
+//	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+
 	// Retrieves and passes transform matirices to the shader program
 	GLint modelLoc = glGetUniformLocation(shaderProgram, "model");
 	GLint viewLoc = glGetUniformLocation(shaderProgram, "view");
@@ -189,7 +143,10 @@ void UCreateBuffers() {
 				0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f,		// 2
 				-0.5f, -0.5f, -1.0f, 1.0f, 0.0f, 1.0f,		// 3
 				0.5f, -0.5f, -1.0f, 0.5f, 0.5f, 1.0f,		// 4
-	};
+				
+	 };
+
+
 	// Index data to share postion data
 	GLuint indices[] = {
 
@@ -198,9 +155,11 @@ void UCreateBuffers() {
 			3, 1, 4,	// Back triangle
 			4, 1, 2,	// Left back side triangle
 			0, 3, 4,	// Bottom Triangle
-			0, 4, 2		// Bottom triangle
-
+			0, 4, 2,		// Bottom triangle
+			 5, 6, 7,8   //square-štirikotnik 
 	};
+
+	
 
 	// Generate buffer ids
 	glGenVertexArrays(1, &VAO);
@@ -213,25 +172,62 @@ void UCreateBuffers() {
 	// Activate the VBO
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(verticiesSquare), verticiesSquare, GL_STATIC_DRAW);
 	// Activate the lement buffer object / indicies
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
 		GL_STATIC_DRAW);
+/*	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesSquare), indicesSquare,
+		GL_STATIC_DRAW); */
+
 
 	// set attribute pointer 0 to hold position data
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (6) * sizeof(GLfloat),
 		(GLvoid*)0);
 	glEnableVertexAttribArray(0);
 
 	// Set attribute pointer 1 to hold Color data
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (6) * sizeof(GLfloat),
 		(GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
+	glBindVertexArray(0);
 
 	// Sets polygon mode allows me to see wireframe view
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
+	 	GLfloat verticesSquare[] = {
+				-0.5f, -0.8f, 0.0f, 1.0, 0.0f, 0.0f,		// 5
+				0.5f, -0.8f, -0.5f, 0.0f, 1.0f, 0.0f,		// 6
+				0.5f, -0.8f, 0.0f, 1.0f, 1.0f, 0.0f,		// 7
+				-0.5f, -0.8f, -1.0f, 1.0f, 0.0f, 1.0f		// 8
+				};
+					GLuint indicesSquare[] = {
+			 5, 6, 7,8   //square-štirikotnik
+	};
 
-	glBindVertexArray(0);
+
+	glGenVertexArrays(1, &VAOSquare);
+	glGenBuffers(1, &VBOSquare);
+	glGenBuffers(1, &EBOSquare);
+
+
+	glBindVertexArray(VAOSquare);
+	glBindBuffer(GL_ARRAY_BUFFER, VBOSquare);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesSquare), verticesSquare, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOSquare);
+
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesSquare), indicesSquare,
+		GL_STATIC_DRAW);
+
+	// Set attribute pointer 1 to hold Color data
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (5) * sizeof(GLfloat),
+		(GLvoid*)(3 * sizeof(GLfloat)));
+	//glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(1);
+	glBindVertexArray(1);
+	
 }
 
 
@@ -270,19 +266,19 @@ void processSpecialKeys(unsigned char key, int x, int y)
 			break;
 		case 'a': //move left
 			translateX -= step;
-			cout << "camera moving left " << translateX << endl;
+			cout << "object moving left " << translateX << endl;
 			break;
 		case 'd': //move right
 			translateX += step;
-			cout << "camera moving right " << translateX << endl;
+			cout << "object moving right " << translateX << endl;
 			break;
 		case 'w': //move up
 			translateY += step;
-			cout << "camera moving up " << translateY << endl;		
+			cout << "object moving up " << translateY << endl;		
 			break;
 		case 's': // move down
 			translateY -= step;
-			cout << "camera moving down " <<translateY << endl;
+			cout << "object moving down " <<translateY << endl;
 			break;
 		case 'o':
 			ortho += 1;
@@ -293,8 +289,19 @@ void processSpecialKeys(unsigned char key, int x, int y)
 			}
 			else
 			{
+				//2d showing 
 				cout << "pravokotno-perspective " << endl;
 			}
+		//change the look at position
+		case '1':
+			UP = glm::vec3(1.0f, 0.0f, 0.0f);
+			break;
+		case '2':
+			UP = glm::vec3(0.0f, 1.0f, 0.0f);
+			break;
+		case '3':
+			UP = glm::vec3(0.0f, 0.0f, 1.0f);
+			break;
 		case 32:
 			cout << "space"<<endl;
 			break;
@@ -306,33 +313,29 @@ void processSpecialKeys(unsigned char key, int x, int y)
 }
 
 
-void processNormalKeys(unsigned char key, int x, int y)
+void mouseWheel(int button, int dir, int x, int y)
 {
-
-	switch (key)
+	if (dir > 0)
 	{
-	
-	case 27:      break;
-	default:break;
+		cameraFront += 0.2f;
+		cout << "Zoom in" << endl;
 	}
-
-
+	else
+	{
+		cameraPos -= 0.2f;
+		cout << "Zoom out" << endl;
+	}
+	glutPostRedisplay();
 }
 int main(int argc, char* argv[]) {
-	/*
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	//use core profile
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	*/
-
+	
 	glutInit(&argc, argv);
 	glEnable(GL_DEPTH_TEST);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(WindowWidth, WindowHeight);
 	glutCreateWindow(WINDOW_TITLE);
 
-	//GLFWwindow*window= glfwCreateWindow(WindowWidth, WindowHeight, "3D piramida", NULL, NULL);
+	
 	glutReshapeFunc(UResizeWindow);
 	//glfwMakeContextCurrent(window);
 //	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -358,9 +361,10 @@ int main(int argc, char* argv[]) {
 	// Set background color
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glutKeyboardFunc(processSpecialKeys);
+	glutMouseWheelFunc(mouseWheel);
 
 	glutDisplayFunc(URenderGraphics);
-	//glutKeyboardFunc(processNormalKeys);
+	
 	
 
 
