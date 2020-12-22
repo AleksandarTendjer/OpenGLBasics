@@ -81,9 +81,19 @@ void URenderGraphics() {
 	glutPostRedisplay();
 
 	// Draws the triangles
-	glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
+	//glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
+	//glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
+	
+	// Object 1
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, (void*)0);
+	
 
-	glBindVertexArray(0);
+	// Object 2
+	glBindVertexArray(VAOSquare);
+	glDrawArrays(GL_TRIANGLES, 0, 4);//(GL_TRIANGLES, 4, GL_UNSIGNED_INT, (void*)0);
+
+	//glBindVertexArray(0);
 
 	glutSwapBuffers();
 
@@ -150,13 +160,12 @@ void UCreateBuffers() {
 	// Index data to share postion data
 	GLuint indices[] = {
 
-	0, 1, 2,	// Front Triangle
+	        0, 1, 2,	// Front Triangle
 			0, 3, 1,	// Right Side triangle
 			3, 1, 4,	// Back triangle
 			4, 1, 2,	// Left back side triangle
 			0, 3, 4,	// Bottom Triangle
 			0, 4, 2,		// Bottom triangle
-			 5, 6, 7,8   //square-štirikotnik 
 	};
 
 	
@@ -172,15 +181,11 @@ void UCreateBuffers() {
 	// Activate the VBO
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(verticies), verticies, GL_STATIC_DRAW);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(verticiesSquare), verticiesSquare, GL_STATIC_DRAW);
+	
 	// Activate the lement buffer object / indicies
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
 		GL_STATIC_DRAW);
-/*	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesSquare), indicesSquare,
-		GL_STATIC_DRAW); */
-
 
 	// set attribute pointer 0 to hold position data
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (6) * sizeof(GLfloat),
@@ -190,17 +195,19 @@ void UCreateBuffers() {
 	// Set attribute pointer 1 to hold Color data
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (6) * sizeof(GLfloat),
 		(GLvoid*)(3 * sizeof(GLfloat)));
+
 	glEnableVertexAttribArray(1);
-	glBindVertexArray(0);
-	/*
-	// Sets polygon mode allows me to see wireframe view
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	//glBindVertexArray(0);
+
+	/******************SQUARE*********************/
+
 	
 	 	GLfloat verticesSquare[] = {
-				-0.5f, -0.8f, 0.0f, 1.0, 0.0f, 0.0f,		// 5
-				0.5f, -0.8f, -0.5f, 0.0f, 1.0f, 0.0f,		// 6
-				0.5f, -0.8f, 0.0f, 1.0f, 1.0f, 0.0f,		// 7
-				-0.5f, -0.8f, -1.0f, 1.0f, 0.0f, 1.0f		// 8
+				-0.9f, -0.8f, 0.0f, 1.0, 0.0f, 0.0f,		// 5
+				0.9f, -0.8f, -0.5f, 0.0f, 1.0f, 0.0f,		// 6
+				0.9f, -0.8f, 0.0f, 1.0f, 1.0f, 0.0f,		// 7
+				-0.9f, -0.8f, -1.0f, 1.0f, 0.0f, 1.0f		// 8
 				};
 					GLuint indicesSquare[] = {
 			 5, 6, 7,8   //square-štirikotnik
@@ -220,14 +227,18 @@ void UCreateBuffers() {
 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesSquare), indicesSquare,
 		GL_STATIC_DRAW);
-	
+	// set attribute pointer 0 to hold position data
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (6) * sizeof(GLfloat),
+		(GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
 	// Set attribute pointer 1 to hold Color data
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (5) * sizeof(GLfloat),
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (6) * sizeof(GLfloat),
 		(GLvoid*)(3 * sizeof(GLfloat)));
-	//glEnableVertexAttribArray(1);
+
 	glEnableVertexAttribArray(1);
-	glBindVertexArray(1);
-	*/
+	//glBindVertexArray(0);
+	
 	
 }
 
@@ -303,9 +314,19 @@ void processSpecialKeys(unsigned char key, int x, int y)
 		case '3':
 			UP = glm::vec3(0.0f, 0.0f, 1.0f);
 			break;
-		case 32:
-			cout << "space"<<endl;
+		case 27:
+			glutDestroyWindow(winId);
+			// Deletes buffer objects once used
+			glDeleteVertexArrays(1, &VAO);
+			glDeleteBuffers(1, &VBO);
+			glDeleteBuffers(1, &EBO);
+			glDeleteVertexArrays(1, &VAOSquare);
+			glDeleteBuffers(1, &VBOSquare);
+			glDeleteBuffers(1, &EBOSquare);
+			cout << "esc" << endl;
+			exit(0);
 			break;
+			
 		default:
 			break;
 		}
@@ -334,7 +355,7 @@ int main(int argc, char* argv[]) {
 	glEnable(GL_DEPTH_TEST);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(WindowWidth, WindowHeight);
-	glutCreateWindow(WINDOW_TITLE);
+	 winId=glutCreateWindow(WINDOW_TITLE);
 
 	
 	glutReshapeFunc(UResizeWindow);
@@ -375,13 +396,7 @@ int main(int argc, char* argv[]) {
 
 
 
-	// Deletes buffer objects once used
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
-	glDeleteVertexArrays(1, &VAOSquare);
-	glDeleteBuffers(1, &VBOSquare);
-	glDeleteBuffers(1, &EBOSquare);
+	
 
 	return 0;
 }
