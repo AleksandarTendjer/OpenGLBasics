@@ -53,7 +53,7 @@ void URenderGraphics() {
 	//                         BY MULTIPLYING THE MODEL2WORLD MATRICES
 
 	//WORLD 2 VIEW TRANSFORMATION MATRIX is look at 
-	glm::lookAt(cameraPos, cameraPos + cameraFront, UP);
+	view=glm::lookAt(cameraPos, cameraPos + cameraFront, UP);
 	// Perspective projection
 	glm::mat4 projection;
 	if (ortho % 2 != 0)
@@ -237,7 +237,7 @@ void UCreateBuffers() {
 		(GLvoid*)(3 * sizeof(GLfloat)));
 
 	glEnableVertexAttribArray(1);
-	//glBindVertexArray(0);
+	
 	
 	
 }
