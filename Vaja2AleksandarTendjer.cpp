@@ -80,9 +80,6 @@ void URenderGraphics() {
 
 	glutPostRedisplay();
 
-	// Draws the triangles
-	//glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
-	//glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
 	
 	// Object 1
 	glBindVertexArray(VAO);
@@ -93,7 +90,7 @@ void URenderGraphics() {
 	glBindVertexArray(VAOSquare);
 	glDrawArrays(GL_TRIANGLES, 0, 4);//(GL_TRIANGLES, 4, GL_UNSIGNED_INT, (void*)0);
 
-	//glBindVertexArray(0);
+	
 
 	glutSwapBuffers();
 
@@ -268,7 +265,7 @@ void processSpecialKeys(unsigned char key, int x, int y)
 			cout << angle;
 
 			break;
-		case	'e':
+		case	't':
 			rotateX = 1.0f;
 			angle -= 2.0f;
 			if (angle > 360)
@@ -292,6 +289,15 @@ void processSpecialKeys(unsigned char key, int x, int y)
 			translateY -= step;
 			cout << "object moving down " <<translateY << endl;
 			break;
+		case 'q': //move up
+			translateZ += step;
+			cout << "object moving Z up " << translateY << endl;
+			break;
+		case 'e': // move down
+			translateZ -= step;
+			cout << "object moving Z down " << translateY << endl;
+			break;
+
 		case 'o':
 			ortho += 1;
 			if (ortho % 2 != 0)
